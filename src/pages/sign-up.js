@@ -24,10 +24,29 @@ export default function SignUp() {
     if (!usernameExists.length) {
       try {
         const createdUserResult = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(emailAddress, password)
-        
-      } catch (error) {}
+          .auth()
+          .createUserWithEmailAndPassword(emailAddress, password);
+        await createdUserResult.user.updateProfile({
+          displayName: username,
+        });
+        await firebase.firestore().collection("users").add({
+          userId: createdUserResult.user.uid,
+          userame: username.toLowerCase(),
+          fullName,
+          emailAddress: emailAddress.toLowerCase(),
+          following: [],
+          dateCreated: Date.now(),
+        });
+        history.push(ROUTES.DASHBOARD);
+      } catch (error) {
+        setFullName("");
+        setEmailAddress("");
+        setPassword("");
+        setError(error.message);
+      }
+    } else {
+      setUsername("");
+      setError("That username is already taken, please try another.");
     }
   };
 

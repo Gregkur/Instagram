@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useHistory, Link } from "react-router-dom";
 import * as ROUTES from "../constants/routes";
+import { doesUsernameExist } from "../services/firebase";
 import FirebaseContext from "../context/firebase";
 
 export default function SignUp() {
@@ -19,8 +20,15 @@ export default function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    try {
-    } catch (error) {}
+    const usernameExists = await doesUsernameExist(username);
+    if (!usernameExists.length) {
+      try {
+        const createdUserResult = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(emailAddress, password)
+        
+      } catch (error) {}
+    }
   };
 
   useEffect(() => {
@@ -83,7 +91,7 @@ export default function SignUp() {
               type="submit"
               className={`bg-blue-medium text-white w-full rounded h-8 font-bold
             ${isInvalid && "opacity-50"}`}>
-              Login
+              Sign Up
             </button>
           </form>
         </div>
